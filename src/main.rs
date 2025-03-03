@@ -15,8 +15,31 @@ use fmt::info;
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
-    let p = embassy_stm32::init(Default::default());
-    let mut led = Output::new(p.PB7, Level::High, Speed::Low);
+    let mut stm32_config = embassy_stm32::Config::default();
+    {
+        // HSE + PLL fot 80 MHz
+        use embassy_stm32::rcc::{
+            Hse, HseMode, LsConfig, Pll, PllMul, PllPreDiv, PllRDiv, PllSource, Sysclk,
+        };
+        use embassy_stm32::time::mhz;
+        stm32_config.rcc.hsi = false;
+        stm32_config.rcc.hse = Some(Hse {
+            freq: mhz(8),
+            mode: HseMode::Oscillator,
+        });
+        stm32_config.rcc.pll = Some(Pll {
+            source: PllSource::HSE,
+            prediv: PllPreDiv::DIV1,
+            mul: PllMul::MUL20,
+            divp: None,
+            divq: None,
+            divr: Some(PllRDiv::DIV2),
+        });
+        stm32_config.rcc.ls = LsConfig::default_lse();
+        stm32_config.rcc.sys = Sysclk::PLL1_R;
+    }
+    let p = embassy_stm32::init(stm32_config);
+    let mut led = Output::new(p.PC6, Level::High, Speed::Low);
 
     loop {
         info!("Hello, World!");
