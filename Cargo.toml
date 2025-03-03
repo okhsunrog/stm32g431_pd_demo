@@ -30,8 +30,9 @@ opt-level = "z"
 incremental = true
 
 [profile.release]
-debug = false
-lto = true
+#debug = false # no location info in defmt when debug is false
+debug = 2
+lto = "fat"
 opt-level = "z"
 incremental = true
 
