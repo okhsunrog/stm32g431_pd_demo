@@ -1,7 +1,7 @@
 # This file was automatically generated.
 
 [package]
-edition = "2021"
+edition = "2024"
 name = "stm32g431_pd_demo"
 version = "0.1.0"
 
@@ -17,6 +17,14 @@ embassy-sync = "0.6.2"
 embassy-time = { version = "0.4.0", features = ["tick-hz-32_768"] }
 panic-halt = "1.0.0"
 panic-probe = { version = "0.3.2", features = ["print-defmt"], optional = true }
+usbpd = { git = "https://github.com/elagil/usbpd", rev = "ca7d903858704237a433a9aede11da187252238d", features = ["defmt"]}
+
+heapless = { version = "0.8", default-features = false }
+static_cell = "2"
+micromath = "2.1.0"
+
+uom = { version = "0.36.0", default-features = false, features = ["si", "f32"] }
+embedded-hal = "1"
 
 [[bin]]
 name = "stm32g431_pd_demo"
@@ -52,3 +60,8 @@ debug = [
     "embassy-time/defmt-timestamp-uptime",
     "embassy-stm32/defmt",
 ]
+
+[patch.crates-io]
+embassy-time = { git = "https://github.com/embassy-rs/embassy", rev = "0edd45e61013539f0d8379bf38177f6cb03f5fc0" }
+embassy-executor = { git = "https://github.com/embassy-rs/embassy", rev = "0edd45e61013539f0d8379bf38177f6cb03f5fc0" }
+embassy-stm32 = { git = "https://github.com/embassy-rs/embassy", rev = "0edd45e61013539f0d8379bf38177f6cb03f5fc0" }
