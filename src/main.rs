@@ -9,7 +9,14 @@ use panic_halt as _;
 use {defmt_rtt as _, panic_probe as _};
 
 use embassy_executor::Spawner;
-use embassy_stm32::gpio::{Level, Output, Speed};
+use embassy_stm32::{
+    gpio::{Level, Output, Speed},
+    rcc::{
+        Hse, HseMode, LsConfig, Pll, PllMul, PllPDiv, PllPreDiv, PllQDiv, PllRDiv, PllSource,
+        Sysclk,
+    },
+    time::mhz,
+};
 use embassy_time::{Duration, Timer};
 use fmt::unwrap;
 use stm32g431_pd_demo::power::{self, UcpdResources};
@@ -17,31 +24,25 @@ use stm32g431_pd_demo::power::{self, UcpdResources};
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
     let mut stm32_config = embassy_stm32::Config::default();
-    {
-        // HSE + PLL fot 170 MHz
-        use embassy_stm32::rcc::{
-            Hse, HseMode, LsConfig, Pll, PllMul, PllPDiv, PllPreDiv, PllQDiv, PllRDiv, PllSource,
-            Sysclk,
-        };
-        use embassy_stm32::time::mhz;
-        stm32_config.rcc.hsi = true;
-        stm32_config.rcc.hse = Some(Hse {
-            freq: mhz(8),
-            mode: HseMode::Oscillator,
-        });
-        stm32_config.rcc.pll = Some(Pll {
-            source: PllSource::HSE,
-            prediv: PllPreDiv::DIV2,
-            mul: PllMul::MUL85,
-            divp: Some(PllPDiv::DIV2),
-            divq: Some(PllQDiv::DIV2),
-            divr: Some(PllRDiv::DIV2),
-        });
-        stm32_config.rcc.boost = true;
-        stm32_config.rcc.ls = LsConfig::default_lse();
-        stm32_config.rcc.sys = Sysclk::PLL1_R;
-        // stm32_config.enable_ucpd1_dead_battery = true;
-    }
+    // HSI must be enabled for UCPD
+    stm32_config.rcc.hsi = true;
+    stm32_config.rcc.hse = Some(Hse {
+        freq: mhz(8),
+        mode: HseMode::Oscillator,
+    });
+    stm32_config.rcc.pll = Some(Pll {
+        source: PllSource::HSE,
+        prediv: PllPreDiv::DIV2,
+        mul: PllMul::MUL85, // 170 MHz
+        divp: Some(PllPDiv::DIV2),
+        divq: Some(PllQDiv::DIV2),
+        divr: Some(PllRDiv::DIV2),
+    });
+    stm32_config.rcc.boost = true;
+    stm32_config.rcc.sys = Sysclk::PLL1_R;
+    // connect DBx pins to CCx for dead battery feature and enable this:
+    // stm32_config.enable_ucpd1_dead_battery = true;
+
     let p = embassy_stm32::init(stm32_config);
     let led = Output::new(p.PC6, Level::High, Speed::Low);
     spawner.spawn(blink_led(led)).unwrap();
