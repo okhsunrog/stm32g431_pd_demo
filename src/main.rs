@@ -11,14 +11,10 @@ use {defmt_rtt as _, panic_probe as _};
 use embassy_executor::Spawner;
 use embassy_stm32::{
     gpio::{Level, Output, Speed},
-    rcc::{
-        Hse, HseMode, LsConfig, Pll, PllMul, PllPDiv, PllPreDiv, PllQDiv, PllRDiv, PllSource,
-        Sysclk,
-    },
+    rcc::{Hse, HseMode, Pll, PllMul, PllPDiv, PllPreDiv, PllQDiv, PllRDiv, PllSource, Sysclk},
     time::mhz,
 };
 use embassy_time::{Duration, Timer};
-use fmt::unwrap;
 use stm32g431_pd_demo::power::{self, UcpdResources};
 
 #[embassy_executor::main]
@@ -45,7 +41,7 @@ async fn main(spawner: Spawner) {
 
     let p = embassy_stm32::init(stm32_config);
     let led = Output::new(p.PC6, Level::High, Speed::Low);
-    spawner.spawn(blink_led(led)).unwrap();
+    spawner.spawn(blink_led(led).unwrap());
 
     let ucpd_resources = UcpdResources {
         pin_cc1: p.PB6,
@@ -54,7 +50,7 @@ async fn main(spawner: Spawner) {
         rx_dma: p.DMA1_CH1,
         tx_dma: p.DMA1_CH2,
     };
-    unwrap!(spawner.spawn(power::ucpd_task(ucpd_resources)))
+    spawner.spawn(power::ucpd_task(ucpd_resources).unwrap());
 }
 
 #[embassy_executor::task]
