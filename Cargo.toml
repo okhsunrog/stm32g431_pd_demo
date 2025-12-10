@@ -17,8 +17,8 @@ embassy-sync = "0.7.2"
 embassy-time = { version = "0.5.0", features = ["tick-hz-32_768"] }
 panic-halt = "1.0.0"
 panic-probe = { version = "1.0", features = ["print-defmt"], optional = true }
-usbpd = { git = "https://github.com/okhsunrog/usbpd", branch = "finished_epr_support", features = ["defmt"] }
-usbpd-traits = { git = "https://github.com/okhsunrog/usbpd", branch = "finished_epr_support", features = ["defmt"] }
+usbpd = { git = "https://github.com/okhsunrog/usbpd", rev = "b5dd12e", features = ["defmt"] }
+usbpd-traits = { git = "https://github.com/okhsunrog/usbpd", rev = "b5dd12e", features = ["defmt"] }
 
 heapless = { version = "0.9", default-features = false }
 static_cell = "2"

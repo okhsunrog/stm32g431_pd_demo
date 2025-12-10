@@ -1148,7 +1148,7 @@ dependencies = [
 [[package]]
 name = "usbpd"
 version = "2.0.0"
-source = "git+https://github.com/okhsunrog/usbpd?branch=finished_epr_support#c0f1c61dc6a81426744159f690706055ff5a3eac"
+source = "git+https://github.com/okhsunrog/usbpd?rev=b5dd12e#b5dd12efce584b77df5c78ea9fdfba0d0a2fff5a"
 dependencies = [
  "byteorder",
  "defmt 1.0.1",
@@ -1163,7 +1163,7 @@ dependencies = [
 [[package]]
 name = "usbpd-traits"
 version = "1.1.0"
-source = "git+https://github.com/okhsunrog/usbpd?branch=finished_epr_support#c0f1c61dc6a81426744159f690706055ff5a3eac"
+source = "git+https://github.com/okhsunrog/usbpd?rev=b5dd12e#b5dd12efce584b77df5c78ea9fdfba0d0a2fff5a"
 dependencies = [
  "defmt 1.0.1",
 ]
